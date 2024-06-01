@@ -44,7 +44,7 @@ namespace smt {
     protected:
 
         /* ---------------------------------------------------
-        
+
         In the logical context, expressions are 'internalized'. That
         is, the logical context creates auxiliary data-structures
         (e.g., enodes) and attach them to the expressions. The logical
@@ -57,7 +57,7 @@ namespace smt {
         when scope level n is backtracked.
 
         The logical context uses the method is_attached_to_var
-        to decide whether an enode is already associated with a theory 
+        to decide whether an enode is already associated with a theory
         variable or not.
 
         ------------------------------------------------------ */
@@ -78,15 +78,15 @@ namespace smt {
         bool lazy_push();
         bool lazy_pop(unsigned& num_scopes);
         void force_push();
-        
+
     public:
         /**
            \brief Return true if the given enode is attached to a
            variable of the theory.
-           
+
            \remark The result is not equivalent to
            n->get_th_var(get_id()) != null_theory_var
-           
+
            A theory variable v may be in the list of variables of n,
            but it may be inherited from another enode n' during an
            equivalence class merge. That is, get_enode(v) != n.
@@ -98,7 +98,7 @@ namespace smt {
 
         struct scoped_trace_stream {
             ast_manager& m;
-            
+
             scoped_trace_stream(ast_manager& m, std::function<void (void)>& fn): m(m) {
                 if (m.has_trace_stream()) {
                     fn();
@@ -154,7 +154,7 @@ namespace smt {
                     th.log_axiom_instantiation(ls);
                 }
             }
-            
+
             ~scoped_trace_stream() {
                 if (m.has_trace_stream()) {
                     m.trace_stream() << "[end-of-instance]\n";
@@ -164,13 +164,13 @@ namespace smt {
 
         struct if_trace_stream {
             ast_manager& m;
-            
+
             if_trace_stream(ast_manager& m, std::function<void (void)>& fn): m(m) {
                 if (m.has_trace_stream()) {
                     fn();
                 }
             }
-        };        
+        };
 
     protected:
         /**
@@ -186,7 +186,7 @@ namespace smt {
 
         /**
            \brief This method is invoked by the logical context when
-           atom is being internalized. The theory may return false if it 
+           atom is being internalized. The theory may return false if it
            does not want to implement the given predicate symbol.
 
            After the execution of this method the given atom must be
@@ -200,13 +200,13 @@ namespace smt {
         */
         virtual void internalize_eq_eh(app * atom, bool_var v) {
         }
-                                    
+
         /**
            \brief This method is invoked by the logical context when
            the term is being internalized. The theory may return false
            if it does not want to implement the given function symbol.
-           
-           After the execution of this method the given term must be 
+
+           After the execution of this method the given term must be
            associated with a new enode.
         */
         virtual bool internalize_term(app * term) = 0;
@@ -218,7 +218,7 @@ namespace smt {
         }
 
         /**
-           \brief This method is invoked when a truth value is 
+           \brief This method is invoked when a truth value is
            assigned to the given boolean variable.
         */
         virtual void assign_eh(bool_var v, bool is_true) {
@@ -240,8 +240,8 @@ namespace smt {
            \brief Return true if the theory does something with the
            disequalities implied by the core.
         */
-        virtual bool use_diseqs() const { 
-            return true; 
+        virtual bool use_diseqs() const {
+            return true;
         }
 
         /**
@@ -255,7 +255,7 @@ namespace smt {
          */
         virtual void relevant_eh(app * n) {
         }
-        
+
         /**
            \brief This method is invoked when a new backtracking point
            is created.
@@ -307,7 +307,7 @@ namespace smt {
 
         /**
            \brief This method is invoked when the logical context assigned
-           a truth value to all boolean variables and no inconsistency was 
+           a truth value to all boolean variables and no inconsistency was
            detected.
         */
         virtual final_check_status final_check_eh() {
@@ -328,21 +328,21 @@ namespace smt {
         virtual bool is_beta_redex(enode* p, enode* n) const {
             return false;
         }
-    
+
         /**
            \brief Return true if the theory has something to propagate
         */
         virtual bool can_propagate() {
             return false;
         }
-        
+
         /**
            \brief This method is invoked to give a theory a chance to perform
            theory propagation.
         */
         virtual void propagate() {
         }
-        
+
         /**
            \brief This method allows a theory to contribute to
            disequality propagation.
@@ -364,7 +364,7 @@ namespace smt {
 
         // ----------------------------------------------------
         //
-        // Model validation 
+        // Model validation
         //
         // ----------------------------------------------------
 
@@ -389,7 +389,7 @@ namespace smt {
     public:
         theory(context& ctx, family_id fid);
         virtual ~theory();
-        
+
         virtual void setup() {}
 
         virtual void init() {}
@@ -405,7 +405,7 @@ namespace smt {
         context & get_context() const {
             return ctx;
         }
-        
+
         ast_manager & get_manager() const {
             return m;
         }
@@ -422,7 +422,7 @@ namespace smt {
         }
 
         /**
-           \brief Return the equivalence class representative 
+           \brief Return the equivalence class representative
            of the given theory variable.
         */
         theory_var get_representative(theory_var v) const {
@@ -432,7 +432,7 @@ namespace smt {
             return r;
         }
 
-        /** 
+        /**
             \brief Return true if the theory variable is the representative
             of its equivalence class.
         */
@@ -441,7 +441,7 @@ namespace smt {
         }
 
         virtual bool is_safe_to_copy(bool_var v) const { return true; }
-        
+
         unsigned get_num_vars() const {
             return m_var2enode.size();
         }
@@ -449,28 +449,28 @@ namespace smt {
         unsigned get_old_num_vars(unsigned num_scopes) const {
             return m_var2enode_lim[m_var2enode_lim.size() - num_scopes];
         }
-        
+
         virtual void display(std::ostream & out) const = 0;
 
         virtual void display_var2enode(std::ostream & out) const;
-        
+
         virtual void collect_statistics(::statistics & st) const {
         }
-        
+
         std::ostream& display_app(std::ostream & out, app * n) const;
-        
+
         std::ostream& display_flat_app(std::ostream & out, app * n) const;
-        
+
 
     protected:
-        void log_axiom_instantiation(app * r, unsigned axiom_id = UINT_MAX, unsigned num_bindings = 0, 
-                                     app * const * bindings = nullptr, unsigned pattern_id = UINT_MAX, 
+        void log_axiom_instantiation(app * r, unsigned axiom_id = UINT_MAX, unsigned num_bindings = 0,
+                                     app * const * bindings = nullptr, unsigned pattern_id = UINT_MAX,
                                      const vector<std::tuple<enode *, enode *>> & used_enodes = vector<std::tuple<enode *, enode*>>());
 
-        void log_axiom_instantiation(expr * r, unsigned axiom_id = UINT_MAX, unsigned num_bindings = 0, 
-                                     app * const * bindings = nullptr, unsigned pattern_id = UINT_MAX, 
-                                     const vector<std::tuple<enode *, enode *>> & used_enodes = vector<std::tuple<enode *, enode*>>()) { 
-            log_axiom_instantiation(to_app(r), axiom_id, num_bindings, bindings, pattern_id, used_enodes); 
+        void log_axiom_instantiation(expr * r, unsigned axiom_id = UINT_MAX, unsigned num_bindings = 0,
+                                     app * const * bindings = nullptr, unsigned pattern_id = UINT_MAX,
+                                     const vector<std::tuple<enode *, enode *>> & used_enodes = vector<std::tuple<enode *, enode*>>()) {
+            log_axiom_instantiation(to_app(r), axiom_id, num_bindings, bindings, pattern_id, used_enodes);
         }
 
         void log_axiom_instantiation(literal_vector const& ls);
@@ -495,7 +495,7 @@ namespace smt {
         /**
            \brief Assume eqs between variable that are equal with respect to the given table.
            Table is a hashtable indexed by the variable value.
-           
+
            table.contains(v) should be true if there is v' in table such that assignment of
            v is equal to v'.
 
@@ -531,7 +531,7 @@ namespace smt {
         }
 
         /**
-           \brief When an eq atom n is created during the search, the default behavior is 
+           \brief When an eq atom n is created during the search, the default behavior is
            to make sure that the n->get_arg(0)->get_id() < n->get_arg(1)->get_id().
            This may create some redundant atoms, since some theories/families use different
            conventions in their simplifiers. For example, arithmetic always force a numeral
@@ -542,7 +542,7 @@ namespace smt {
             ast_manager& m = get_manager();
             if (lhs->get_id() > rhs->get_id())
                 std::swap(lhs, rhs);
-            if (m.are_distinct(lhs, rhs))                
+            if (m.are_distinct(lhs, rhs))
                 return m.mk_false();
             if (m.are_equal(lhs, rhs))
                 return m.mk_true();
@@ -568,7 +568,7 @@ namespace smt {
         /**
            \brief Return true if theory support model construction
         */
-        virtual bool build_models() const { 
+        virtual bool build_models() const {
             return true;
         }
 
@@ -577,7 +577,7 @@ namespace smt {
 
         virtual void finalize_model(model_generator & m) {
         }
-        
+
         /**
            \brief Return a functor that can build the value (interpretation) for n.
         */
@@ -630,7 +630,7 @@ namespace smt {
          */
         virtual bool is_fixed_propagated(theory_var v, expr_ref& val, literal_vector & explain) { return false; }
     };
-    
+
 };
 
 

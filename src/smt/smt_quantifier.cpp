@@ -313,7 +313,7 @@ namespace smt {
                 m_num_instances++;
             }
 
-            CTRACE("bindings", f != nullptr, 
+            CTRACE("bindings", f != nullptr,
                   tout << expr_ref(q, m()) << "\n";
                   for (unsigned i = 0; i < num_bindings; ++i) {
                       tout << expr_ref(bindings[i]->get_expr(), m()) << " [r " << bindings[i]->get_root()->get_owner_id() << "] ";
@@ -361,6 +361,7 @@ namespace smt {
         }
 
         bool can_propagate() {
+            TRACE("svirpti_quantifier_can_propagate", tout << "m_queue_has_work: " << m_qi_queue.has_work() << " plugin_can_propagate: " << m_plugin->can_propagate() << "\n";);
             return m_qi_queue.has_work() || m_plugin->can_propagate();
         }
 
@@ -381,7 +382,7 @@ namespace smt {
             IF_VERBOSE(10, verbose_stream() << "quick checking quantifiers (unsat)...\n";);
             quick_checker mc(m_context);
             bool result = true;
-            for (quantifier* q : m_quantifiers) 
+            for (quantifier* q : m_quantifiers)
                 if (check_quantifier(q) && mc.instantiate_unsat(q))
                     result = false;
             if (m_params.m_qi_quick_checker == MC_UNSAT || !result) {
@@ -391,7 +392,7 @@ namespace smt {
             // MC_NO_SAT is too expensive (it creates too many irrelevant instances).
             // we should use MBQI=true instead.
             IF_VERBOSE(10, verbose_stream() << "quick checking quantifiers (not sat)...\n";);
-            for (quantifier* q : m_quantifiers) 
+            for (quantifier* q : m_quantifiers)
                 if (check_quantifier(q) && mc.instantiate_not_sat(q))
                     result = false;
             m_qi_queue.instantiate();
@@ -429,7 +430,7 @@ namespace smt {
         m_imp->m_plugin->set_manager(*this);
         m_lazy_scopes = 0;
         m_lazy = true;
-        
+
     }
 
     quantifier_manager::~quantifier_manager() {
@@ -536,10 +537,10 @@ namespace smt {
         return m_imp->check_model(m, root2value);
     }
 
-    void quantifier_manager::push() {        
-        if (m_lazy) 
+    void quantifier_manager::push() {
+        if (m_lazy)
             ++m_lazy_scopes;
-        else 
+        else
             m_imp->push();
     }
 
@@ -651,19 +652,19 @@ namespace smt {
         void push() override {
             m_mam->push_scope();
             m_lazy_mam->push_scope();
-            m_model_finder->push_scope();            
+            m_model_finder->push_scope();
         }
 
         void pop(unsigned num_scopes) override {
             m_mam->pop_scope(num_scopes);
             m_lazy_mam->pop_scope(num_scopes);
-            m_model_finder->pop_scope(num_scopes);            
+            m_model_finder->pop_scope(num_scopes);
         }
 
         void init_search_eh() override {
             m_lazy_matching_idx = 0;
             m_model_finder->init_search_eh();
-            m_model_checker->init_search_eh();            
+            m_model_checker->init_search_eh();
         }
 
         void assign_eh(quantifier * q) override {
